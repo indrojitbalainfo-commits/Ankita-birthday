@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday Ankita 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff4d8d; --rose:#ff8fb7; --gold:#ffd166; --purple:#7b2ff7;
+    --bg1:#2b0a3d; --bg2:#7b2ff7; --bg3:#ff4d8d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow-x:hidden}
+  body{
+    font-family:'Poppins',sans-serif;color:#fff;
+    background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+    background-attachment:fixed;
+    min-height:100vh;min-height:100dvh;
+    display:flex;align-items:center;justify-content:center;
+    padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));
+  }
+  canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+  /* floating hearts / balloons background */
+  .floaters{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+  .floaters span{
+    position:absolute;bottom:-60px;font-size:28px;opacity:.0;
+    animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) rotate(0);opacity:0}
+    10%{opacity:.85}
+    100%{transform:translateY(-115vh) rotate(25deg);opacity:0}
+  }
+
+  .stage{position:relative;z-index:10;width:100%;max-width:440px;text-align:center}
+
+  /* Gift screen */
+  #intro{transition:opacity .6s,transform .6s}
+  #intro.hide{opacity:0;transform:scale(.8);pointer-events:none;position:absolute;inset:0}
+  .intro-title{font-family:'Dancing Script',cursive;font-size:2rem;margin-bottom:6px}
+  .intro-sub{font-weight:300;opacity:.85;margin-bottom:28px;font-size:.95rem}
+  .gift{
+    font-size:110px;line-height:1;display:inline-block;cursor:pointer;
+    animation:bounce 1.6s ease-in-out infinite;
+    filter:drop-shadow(0 12px 18px rgba(0,0,0,.35));
+    background:none;border:none;color:inherit;
+  }
+  @keyframes bounce{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-16px) rotate(4deg)}}
+  .tap{margin-top:18px;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;animation:pulse 1.5s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+
+  /* Card */
+  #card{display:none;opacity:0}
+  #card.show{display:block;animation:pop .9s cubic-bezier(.2,1.3,.4,1) forwards}
+  @keyframes pop{from{opacity:0;transform:scale(.7) translateY(40px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .glass{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.3);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-radius:28px;padding:30px 22px 26px;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+  }
+  .cake{font-size:64px;animation:bounce 2s ease-in-out infinite;display:inline-block}
+  .hb{font-family:'Dancing Script',cursive;font-size:clamp(2.1rem,9vw,2.8rem);line-height:1.1;margin-top:6px}
+  .name{
+    font-family:'Dancing Script',cursive;font-weight:700;
+    font-size:clamp(3rem,16vw,4.6rem);line-height:1.05;margin:4px 0 12px;
+    background:linear-gradient(90deg,#ffd166,#ff8fb7,#fff,#ffd166);
+    background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shine 4s linear infinite;
+  }
+  @keyframes shine{to{background-position:300% 0}}
+  .date{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:16px}
+  .message{
+    min-height:150px;font-weight:300;font-size:1rem;line-height:1.75;
+    white-space:pre-line;text-align:center;
+  }
+  .cursor{display:inline-block;width:2px;height:1em;background:#fff;margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .signoff{font-family:'Dancing Script',cursive;font-size:1.6rem;margin-top:14px;opacity:0;transition:opacity 1s}
+  .signoff.show{opacity:1}
+  .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  button.action{
+    font-family:inherit;font-size:.95rem;font-weight:600;color:#fff;cursor:pointer;
+    border:none;border-radius:50px;padding:13px 24px;
+    background:linear-gradient(135deg,var(--pink),#ff7a59);
+    box-shadow:0 8px 20px rgba(255,77,141,.5);
+    transition:transform .15s;
+  }
+  button.action.alt{background:linear-gradient(135deg,#7b2ff7,#4facfe);box-shadow:0 8px 20px rgba(123,47,247,.5)}
+  button.action:active{transform:scale(.93)}
+
+  /* Wish overlay */
+  #wishNote{
+    position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translate(-50%,40px);
+    background:#fff;color:#7b2ff7;font-weight:600;padding:12px 22px;border-radius:40px;
+    opacity:0;transition:.5s;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.35);
+    max-width:90vw;text-align:center;font-size:.92rem;
+  }
+  #wishNote.show{opacity:1;transform:translate(-50%,0)}
+
+  @media (prefers-reduced-motion:reduce){
+    .gift,.cake,.floaters span,.name{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+<div class="floaters" id="floaters"></div>
+
+<main class="stage">
+
+  <!-- Step 1: gift -->
+  <section id="intro">
+    <h1 class="intro-title">Something special for you…</h1>
+    <p class="intro-sub">Ankita, there's a surprise waiting 💝</p>
+    <button class="gift" id="giftBtn" aria-label="Open the gift">🎁</button>
+    <p class="tap">Tap to open</p>
+  </section>
+
+  <!-- Step 2: birthday card -->
+  <section id="card">
+    <div class="glass">
+      <div class="cake">🎂</div>
+      <h2 class="hb">Happy Birthday</h2>
+      <div class="name">Ankita</div>
+      <p class="date">✨ 22 November ✨</p>
+
+      <p class="message" id="message"></p>
+      <p class="signoff" id="signoff"></p>
+
+      <div class="btns">
+        <button class="action" id="wishBtn">Make a Wish 🌟</button>
+        <button class="action alt" id="partyBtn">More Confetti 🎉</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="wishNote"></div>
+
+<script>
+/* ============ EDIT YOUR MESSAGE HERE ============ */
+const MESSAGE =
+`Today the world got a little brighter,
+because you were born. 🌸
+
+Your smile can turn any ordinary day
+into something beautiful.
+
+I wish you endless happiness,
+dreams that come true,
+and a year filled with love and laughter.
+
+You deserve every good thing in this world.`;
+
+const SIGNOFF = "With all my heart ❤️";   // change / add your name
+const WISHES = [
+  "May all your dreams come true ✨",
+  "Wishing you a year full of smiles 😊",
+  "May happiness follow you everywhere 🌈",
+  "You deserve the whole world 🌍💖",
+  "Stay beautiful, just the way you are 🌸"
+];
+/* ================================================= */
+
+/* ---------- Confetti engine (no libraries) ---------- */
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+let W, H, DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const COLORS = ['#ff4d8d','#ffd166','#06d6a0','#4facfe','#ffffff','#b388ff','#ff8fb7','#ff9f1c'];
+let particles = [];
+
+function makeParticle(x, y, opts = {}){
+  const angle = opts.angle ?? Math.random() * Math.PI * 2;
+  const speed = (opts.speed ?? 8) * (0.4 + Math.random() * 0.9);
+  return {
+    x, y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    size: 6 + Math.random() * 7,
+    color: COLORS[(Math.random() * COLORS.length) | 0],
+    rot: Math.random() * Math.PI,
+    vr: (Math.random() - .5) * .35,
+    shape: Math.random() < .25 ? 'circle' : (Math.random() < .5 ? 'rect' : 'strip'),
+    tilt: Math.random() * Math.PI * 2,
+    life: 0,
+    max: opts.max ?? (180 + Math.random() * 100)
+  };
+}
+
+function burst(x, y, count = 120, speed = 11){
+  for(let i = 0; i < count; i++) particles.push(makeParticle(x, y, {speed}));
+  loop();
+}
+function cannon(side){
+  const x = side === 'left' ? 0 : W;
+  const base = side === 'left' ? -Math.PI/3 : -2*Math.PI/3;
+  for(let i = 0; i < 90; i++){
+    particles.push(makeParticle(x, H * .85, {
+      angle: base + (Math.random() - .5) * .8, speed: 16
+    }));
+  }
+  loop();
+}
+function rain(duration = 4000){
+  const end = Date.now() + duration;
+  (function drop(){
+    for(let i = 0; i < 5; i++){
+      const p = makeParticle(Math.random() * W, -20, {angle: Math.PI/2 + (Math.random()-.5)*.6, speed: 3, max: 400});
+      particles.push(p);
+    }
+    loop();
+    if(Date.now() < end) setTimeout(drop, 90);
+  })();
+}
+
+let running = false;
+function loop(){
+  if(running) return;
+  running = true;
+  requestAnimationFrame(tick);
+}
+function tick(){
+  ctx.clearRect(0, 0, W, H);
+  particles = particles.filter(p => p.life < p.max && p.y < H + 40);
+  for(const p of particles){
+    p.life++;
+    p.vy += 0.22;          // gravity
+    p.vx *= 0.985;         // air drag
+    p.vy *= 0.985;
+    p.x += p.vx; p.y += p.vy;
+    p.rot += p.vr; p.tilt += .1;
+    const fade = p.life > p.max - 40 ? (p.max - p.life) / 40 : 1;
+    ctx.save();
+    ctx.globalAlpha = Math.max(fade, 0);
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle = p.color;
+    const wob = Math.abs(Math.cos(p.tilt));
+    if(p.shape === 'circle'){
+      ctx.beginPath(); ctx.arc(0,0,p.size/2.2,0,Math.PI*2); ctx.fill();
+    } else if(p.shape === 'strip'){
+      ctx.fillRect(-p.size/2, -1.5, p.size, 3 + wob*2);
+    } else {
+      ctx.fillRect(-p.size/2, -p.size/2 * wob, p.size, p.size * wob + 1);
+    }
+    ctx.restore();
+  }
+  if(particles.length) requestAnimationFrame(tick);
+  else { running = false; ctx.clearRect(0,0,W,H); }
+}
+
+/* ---------- Floating hearts & balloons ---------- */
+(function floaters(){
+  const box = document.getElementById('floaters');
+  const icons = ['💖','🎈','✨','🌸','💕','🎈','⭐'];
+  const n = window.innerWidth < 600 ? 14 : 24;
+  for(let i = 0; i < n; i++){
+    const s = document.createElement('span');
+    s.textContent = icons[i % icons.length];
+    s.style.left = Math.random() * 100 + '%';
+    s.style.fontSize = (18 + Math.random() * 26) + 'px';
+    s.style.animationDuration = (9 + Math.random() * 10) + 's';
+    s.style.animationDelay = (-Math.random() * 15) + 's';
+    box.appendChild(s);
+  }
+})();
+
+/* ---------- Typewriter ---------- */
+function typeMessage(){
+  const el = document.getElementById('message');
+  const sign = document.getElementById('signoff');
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  let i = 0;
+  el.textContent = '';
+  el.appendChild(cursor);
+  (function step(){
+    if(i < MESSAGE.length){
+      cursor.before(document.createTextNode(MESSAGE[i++]));
+      const ch = MESSAGE[i-1];
+      setTimeout(step, ch === '\n' ? 280 : (ch === '.' || ch === ',') ? 160 : 38);
+    } else {
+      cursor.remove();
+      sign.textContent = SIGNOFF;
+      sign.classList.add('show');
+      burst(W/2, H*.35, 80, 9);
+    }
+  })();
+}
+
+/* ---------- Interactions ---------- */
+const intro = document.getElementById('intro');
+const card  = document.getElementById('card');
+
+document.getElementById('giftBtn').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  burst(r.left + r.width/2, r.top + r.height/2, 160, 13);
+  intro.classList.add('hide');
+  setTimeout(() => {
+    intro.style.display = 'none';
+    card.classList.add('show');
+    card.style.display = 'block';
+    cannon('left'); cannon('right');
+    rain(3500);
+    setTimeout(typeMessage, 900);
+  }, 550);
+});
+
+document.getElementById('partyBtn').addEventListener('click', () => {
+  cannon('left'); cannon('right');
+  burst(W/2, H/2, 140, 12);
+});
+
+const note = document.getElementById('wishNote');
+let noteTimer;
+let wishIdx = 0;
+document.getElementById('wishBtn').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  burst(r.left + r.width/2, r.top, 100, 10);
+  note.textContent = WISHES[wishIdx++ % WISHES.length];
+  note.classList.add('show');
+  clearTimeout(noteTimer);
+  noteTimer = setTimeout(() => note.classList.remove('show'), 2800);
+});
+
+/* tap anywhere on the card area for a little burst */
+document.addEventListener('pointerdown', e => {
+  if(e.target.closest('button')) return;
+  if(card.classList.contains('show')) burst(e.clientX, e.clientY, 30, 7);
+});
+</script>
+</body>
+</html>
